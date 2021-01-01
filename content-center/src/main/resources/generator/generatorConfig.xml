@@ -13,7 +13,7 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/user_center"
+                        connectionURL="jdbc:mysql://localhost:3306/content_center"
                         userId="root"
                         password="123456">
         </jdbcConnection>
@@ -28,7 +28,7 @@
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="user">
+        <table tableName="share">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
     </context>

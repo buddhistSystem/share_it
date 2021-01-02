@@ -6,8 +6,12 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   profiles:
     active: dev
+  application:
+    name: content-center
+
 server:
   port: 8081
+
 ---
 
 ---

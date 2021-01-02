@@ -6,6 +6,12 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   profiles:
     active: dev
+  application:
+    name: user-center
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
 ---
 
 ---

@@ -7,9 +7,8 @@ import ribbonconfiguration.RibbonConfiguration;
 
 /**
  * Ribbon 全局配置方式
- * 暂时弃用
  */
-//@Configuration
-//@RibbonClients(defaultConfiguration = RibbonConfiguration.class)
+@Configuration
+@RibbonClients(defaultConfiguration = RibbonConfiguration.class)
 public class RibbonConfig {
 }

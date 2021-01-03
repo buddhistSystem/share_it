@@ -5,9 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import ribbonconfiguration.RibbonConfiguration;
 
 /**
- * user-center 微服务负载均衡策略
+ * 配置单个服务user-center微服务负载均衡策略
+ * 若有其他服务，按照此方式也可实现
  *
- * 暂时弃用，采用配置文件配置
+ * 暂时弃用
  */
 //@Configuration
 //@RibbonClient(name = "user-center", configuration = RibbonConfiguration.class)

@@ -12,23 +12,23 @@ spring:
 server:
   port: 8082
 
-# 配置user-center服务的负载均衡策略
-user-center:
-  ribbon:
-    # 代表Ribbon使用的负载均衡策略
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
-    # 每台服务器最多重试次数，但是首次调用不包括在内， Max number of retries on the same server (excluding the first try)
-    MaxAutoRetries: 1
-    # 最多重试多少台服务器，Max number of next servers to retry (excluding the first server)
-    MaxAutoRetriesNextServer: 1
-    # 无论是请求超时或者socket read timeout都进行重试，Whether all operations can be retried for this client
-    OkToRetryOnAllOperations: true
-    # Interval to refresh the server list from the source
-    ServerListRefreshInterval: 2000
-    # Connect timeout used by Apache HttpClient
-    ConnectTimeout: 3000
-    # Read timeout used by Apache HttpClient
-    ReadTimeout: 3000
+# 配置指定服务user-center的负载均衡策略,目前使用代码全局配置，暂时弃用
+#user-center:
+#  ribbon:
+#    # 代表Ribbon使用的负载均衡策略
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#    # 每台服务器最多重试次数，但是首次调用不包括在内， Max number of retries on the same server (excluding the first try)
+#    MaxAutoRetries: 1
+#    # 最多重试多少台服务器，Max number of next servers to retry (excluding the first server)
+#    MaxAutoRetriesNextServer: 1
+#    # 无论是请求超时或者socket read timeout都进行重试，Whether all operations can be retried for this client
+#    OkToRetryOnAllOperations: true
+#    # Interval to refresh the server list from the source
+#    ServerListRefreshInterval: 2000
+#    # Connect timeout used by Apache HttpClient
+#    ConnectTimeout: 3000
+#    # Read timeout used by Apache HttpClient
+#    ReadTimeout: 3000
 #配置ribbon饥饿加载，默认懒加载
 ribbon:
   eager-load:

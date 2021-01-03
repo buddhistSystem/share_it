@@ -24,24 +24,32 @@ public class ShareService {
     @Resource
     private DiscoveryClient discoveryClient;
 
+    @Resource
+    private RestTemplate restTemplate;
+
     public ShareDto findById(Integer id) {
         //获取分享详情
         Share share = shareMapper.selectByPrimaryKey(id);
         //通过share中的用户id获取用户信息
         Integer userId = share.getId();
+
         //使用http调用用user-center服务,传统方式url是写死的，微服务能动态获取
-        List<ServiceInstance> instances = discoveryClient.getInstances("user-center");
-        //客户端负载均衡
-        List<String> urls = instances.stream()
-                .map(instance -> instance.getUri() + "/users/{id}")
-                .collect(Collectors.toList());
-        int random = ThreadLocalRandom.current().nextInt(urls.size());
-        String url = urls.get(random);
+        /**
+         List<ServiceInstance> instances = discoveryClient.getInstances("user-center");
+         //客户端负载均衡
+         List<String> urls = instances.stream()
+         .map(instance -> instance.getUri() + "/users/{id}")
+         .collect(Collectors.toList());
+         int random = ThreadLocalRandom.current().nextInt(urls.size());
+         String url = urls.get(random);
+         System.out.println(url);
+         **/
+
+        //使用Ribbon 和 restTemplate 实现客户端侧负载均衡
+        String url = "http://user-center/users/{id}";
+
         System.out.println(url);
-
-        RestTemplate restTemplate = new RestTemplate();
         UserDto userDto = restTemplate.getForObject(url, UserDto.class, userId);
-
         ShareDto shareDto = new ShareDto();
         BeanUtils.copyProperties(share, shareDto);
         shareDto.setWxNickname(userDto.getWxNickname());

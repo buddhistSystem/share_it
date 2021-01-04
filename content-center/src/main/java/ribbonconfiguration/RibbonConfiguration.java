@@ -1,9 +1,7 @@
 package ribbonconfiguration;
 
-import com.demo.contnetcenter.config.NacosWeightedRuleConfig;
-import com.netflix.loadbalancer.IPing;
+import com.demo.contentcenter.config.NacosSameClusterWeightedRuleConfig;
 import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.RandomRule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,9 +21,19 @@ public class RibbonConfiguration {
      */
     @Bean
     public IRule ribbonRule() {
+        /**
+         * 随机调用负载均衡算法
+         */
         //return new RandomRule();
-        //采用自定义支持Nacos权重配置的负载均衡算法
-        return new NacosWeightedRuleConfig();
+        /**
+         * 自定义支持Nacos权重配置的负载均衡算法
+         */
+        //return new NacosWeightedRuleConfig();
+        /**
+         * 自定义支持Nacos权重配置的负载均衡算法，优先同集群调用
+         */
+        return new NacosSameClusterWeightedRuleConfig();
+
     }
 
 

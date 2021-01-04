@@ -4,13 +4,22 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        cluster-name: beijing
   profiles:
     active: dev
   application:
     name: content-center
 
 server:
-  port: 8082
+  port: 8090
+
+logging:
+  level:
+    com.demo.contentcenter.feignclient.UserCenterFeignClient: debug
 
 # 配置指定服务user-center的负载均衡策略,目前使用代码全局配置，暂时弃用
 #user-center:

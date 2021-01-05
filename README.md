@@ -10,3 +10,4 @@ springcloud alibaba mini project
 + springCloud Hoxton.SR3
 + springCloudAlibaba 2.2.1.RELEASE
 + nacos 1.2.1
++ sentinel 1.7.1

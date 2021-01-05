@@ -43,10 +43,14 @@ ribbon:
     clients: user-center
     enabled: true
 
-#management:
-#  endpoints:
-#    web:
-#      exposure: "*"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
 
 # 配置指定服务user-center的负载均衡策略,目前使用代码全局配置，暂时弃用
 #user-center:

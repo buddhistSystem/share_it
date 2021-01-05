@@ -14,7 +14,7 @@ spring:
         cluster-name: beijing
     sentinel:
       transport:
-        # 指定sentinel控制太
+        # 指定sentinel控制台地址
         dashboard: localhost:8080
   profiles:
     active: dev

@@ -16,6 +16,12 @@ spring:
       transport:
         # 指定sentinel控制台地址
         dashboard: localhost:8080
+        # 指定和控制台通信的ip，如果不指定会自动选择一个ip注册
+        #client-ip: 127.0.0.1
+        # 指定该客户端和sentinel控制台通信端口，如果不指定，会从8719开始扫描，依次加一，直到找到未被占用的端口
+        #port: 8719
+        # 发送sentinel控制台心跳周期，默认10s
+        #heartbeat-interval-ms: 10000
   profiles:
     active: dev
   application:
@@ -36,7 +42,9 @@ feign:
     max-connections: 200
     # feign单个请求最大连接数
     max-connections-per-route: 50
-
+  # feign 客户端集成sentinel
+  sentinel:
+    enabled: true
 #配置ribbon饥饿加载，默认懒加载
 ribbon:
   eager-load:

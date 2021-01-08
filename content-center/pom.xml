@@ -67,8 +67,25 @@
                     <artifactId>jackson-dataformat-xml</artifactId>
                     <groupId>com.fasterxml.jackson.dataformat</groupId>
                 </exclusion>
+                <!--若使用阿里ahas则去除,用来和自己搭建的sentinel控制台通信-->
+<!--                <exclusion>-->
+<!--                    <artifactId>com.alibaba.csp</artifactId>-->
+<!--                    <groupId>sentinel-transport-simple-http</groupId>-->
+<!--                </exclusion>-->
             </exclusions>
         </dependency>
+        <!--使用阿里ahas应用高可用服务储存sentinel流控配置,目前使用本地配置-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.csp</groupId>-->
+<!--            <artifactId>spring-boot-starter-ahas-sentinel-client</artifactId>-->
+<!--            <version>1.3.5</version>-->
+<!--        </dependency>-->
+        <!-- ahas依赖于aop -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

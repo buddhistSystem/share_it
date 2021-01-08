@@ -12,6 +12,7 @@ spring:
       discovery:
         server-addr: localhost:8848
         cluster-name: beijing
+    # 使用ahas则不需要以下配置，目前使用本地sentinel
     sentinel:
       transport:
         # 指定sentinel控制台地址
@@ -59,6 +60,16 @@ management:
   endpoint:
     health:
       show-details: always
+
+#ahas配置
+#指定您要接入的特定的AHAS环境。
+#ahas:
+#  namespace: default
+#  license: 4ca03f190009418ca461aa4351472e0c
+#自定义您的应用名称。
+#project.name: content-center
+
+
 
 # 配置指定服务user-center的负载均衡策略,目前使用代码全局配置，暂时弃用
 #user-center:

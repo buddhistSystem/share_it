@@ -1,6 +1,7 @@
 package com.demo.contentcenter.service.share;
 
 import com.demo.contentcenter.dao.share.ShareMapper;
+import com.demo.contentcenter.domain.dto.content.ShareAuditDto;
 import com.demo.contentcenter.domain.dto.content.ShareDto;
 import com.demo.contentcenter.domain.dto.user.UserDto;
 import com.demo.contentcenter.domain.entity.Share;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 
 @Service
 public class ShareService {
@@ -75,4 +77,21 @@ public class ShareService {
         return shareDto;
     }
 
+    public Share auditById(Integer id, ShareAuditDto shareAuditDto) {
+        //1.查询share是否存在
+        Share share = this.shareMapper.selectByPrimaryKey(id);
+        if (share == null) {
+            throw new IllegalArgumentException("该分享不存在！");
+        }
+        //2.审核，修改状态
+        if (!Objects.equals("NOT_YET", share.getAuditStatus())) {
+            throw new IllegalArgumentException("该分享已经审核，或者审核不通过！");
+        }
+        share.setAuditStatus(shareAuditDto.getAuditStatusEnum().toString());
+        this.shareMapper.updateByPrimaryKeySelective(share);
+        //3.如果PASS，为发布人增加积分,积分服务并不太重要，异步执行，改善用户体验
+        // 当前有4种方式实现异步 1.AsyncRestTemplate 2.@Async注解 3.WebClient spring5.0引入， 4.MQ
+
+        return share;
+    }
 }

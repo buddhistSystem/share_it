@@ -1,4 +1,4 @@
-package com.demo.contentcenter.domain.entity.user;
+package com.demo.usercenter.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

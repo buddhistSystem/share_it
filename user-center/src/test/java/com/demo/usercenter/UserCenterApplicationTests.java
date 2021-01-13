@@ -1,4 +1,4 @@
-package com.demo.contentcenter;
+package com.demo.usercenter;
 
 
 import org.junit.Test;

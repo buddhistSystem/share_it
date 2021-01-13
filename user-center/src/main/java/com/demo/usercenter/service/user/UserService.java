@@ -1,7 +1,7 @@
-package com.demo.contentcenter.service.user;
+package com.demo.usercenter.service.user;
 
-import com.demo.contentcenter.dao.user.UserMapper;
-import com.demo.contentcenter.domain.entity.user.User;
+import com.demo.usercenter.dao.user.UserMapper;
+import com.demo.usercenter.domain.entity.User;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

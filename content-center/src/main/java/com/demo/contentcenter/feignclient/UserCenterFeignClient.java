@@ -1,7 +1,6 @@
 package com.demo.contentcenter.feignclient;
 
 import com.demo.contentcenter.domain.dto.user.UserDto;
-import com.demo.contentcenter.feignclient.fallback.UserCenterFeignClientFallback;
 import com.demo.contentcenter.feignclient.fallbackFactory.UserCenterFeignClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -20,6 +20,7 @@
         <tk.mybaits.vesrion>2.1.5</tk.mybaits.vesrion>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
+        <rocketmq-version>2.0.3</rocketmq-version>
     </properties>
 
     <dependencies>
@@ -59,6 +60,11 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>${rocketmq-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
             <exclusions>
@@ -68,18 +74,18 @@
                     <groupId>com.fasterxml.jackson.dataformat</groupId>
                 </exclusion>
                 <!--若使用阿里ahas则去除,用来和自己搭建的sentinel控制台通信-->
-<!--                <exclusion>-->
-<!--                    <artifactId>com.alibaba.csp</artifactId>-->
-<!--                    <groupId>sentinel-transport-simple-http</groupId>-->
-<!--                </exclusion>-->
+                <!--                <exclusion>-->
+                <!--                    <artifactId>com.alibaba.csp</artifactId>-->
+                <!--                    <groupId>sentinel-transport-simple-http</groupId>-->
+                <!--                </exclusion>-->
             </exclusions>
         </dependency>
         <!--使用阿里ahas应用高可用服务储存sentinel流控配置,目前使用本地配置-->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.csp</groupId>-->
-<!--            <artifactId>spring-boot-starter-ahas-sentinel-client</artifactId>-->
-<!--            <version>1.3.5</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.alibaba.csp</groupId>-->
+        <!--            <artifactId>spring-boot-starter-ahas-sentinel-client</artifactId>-->
+        <!--            <version>1.3.5</version>-->
+        <!--        </dependency>-->
         <!-- ahas依赖于aop -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

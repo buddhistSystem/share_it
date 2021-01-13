@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/content_center
+    url: jdbc:mysql://localhost:3306/content_center?characterEncoding=utf-8&useSSL=false
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -52,6 +52,7 @@ ribbon:
     clients: user-center
     enabled: true
 
+# 配置actuator暴露节点
 management:
   endpoints:
     web:
@@ -60,6 +61,13 @@ management:
   endpoint:
     health:
       show-details: always
+
+# 配置rocketmq
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    # 必须指定group
+    group: test-grop
 
 #ahas配置
 #指定您要接入的特定的AHAS环境。

@@ -18,17 +18,17 @@
                         password="123456">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.demo.contentcenter.domain.entity"
+        <javaModelGenerator targetPackage="com.demo.usercenter.domain.entity"
                             targetProject="src/main/java"/>
 
         <sqlMapGenerator targetPackage="mapper"
                          targetProject="src/main/resources"/>
 
-        <javaClientGenerator targetPackage="com.demo.contentcenter.dao"
+        <javaClientGenerator targetPackage="com.demo.usercenter.dao"
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="user">
+        <table tableName="bonus_event_log">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
     </context>

@@ -1,7 +1,7 @@
-package com.demo.contentcenter.controller.user;
+package com.demo.usercenter.controller.user;
 
-import com.demo.contentcenter.domain.entity.user.User;
-import com.demo.contentcenter.service.user.UserService;
+import com.demo.usercenter.domain.entity.User;
+import com.demo.usercenter.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

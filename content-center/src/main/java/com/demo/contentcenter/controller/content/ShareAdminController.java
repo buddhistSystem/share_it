@@ -14,7 +14,7 @@ public class ShareAdminController {
     @Resource
     private ShareService shareService;
 
-    @PutMapping
+    @PutMapping("audit/{id}")
     public Share auditById(@PathVariable Integer id, @RequestBody ShareAuditDto shareAuditDto){
         // TODO 认证，授权
         return this.shareService.auditById(id,shareAuditDto);

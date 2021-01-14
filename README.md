@@ -1,8 +1,9 @@
 # share_it
-springcloud alibaba mini project
+springcloud alibaba project
 
 + nacos 控制台默认地址：http://localhost:8848/nacos 用户名：nacos 密码：nacos
 + nacos 文档地址：https://nacos.io/zh-cn/docs/what-is-nacos.html
++ rocketmq broker 启动命令 start mqbroker.cmd -n 127.0.0.1:9876 autoCreateTopicEnable=true
 
 ## 1.框架版本
 

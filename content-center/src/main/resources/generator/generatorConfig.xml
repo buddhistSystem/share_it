@@ -28,7 +28,7 @@
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="share">
+        <table tableName="rocketmq_transaction_log">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
     </context>

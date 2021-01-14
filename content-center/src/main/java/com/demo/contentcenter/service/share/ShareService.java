@@ -1,20 +1,27 @@
 package com.demo.contentcenter.service.share;
 
+import com.demo.contentcenter.dao.RocketmqTransactionLogMapper;
 import com.demo.contentcenter.dao.share.ShareMapper;
 import com.demo.contentcenter.domain.dto.content.ShareAuditDto;
 import com.demo.contentcenter.domain.dto.content.ShareDto;
 import com.demo.contentcenter.domain.dto.messaging.UserAddBonusMsgDto;
 import com.demo.contentcenter.domain.dto.user.UserDto;
+import com.demo.contentcenter.domain.entity.RocketmqTransactionLog;
 import com.demo.contentcenter.domain.entity.Share;
+import com.demo.contentcenter.domain.enums.AuditStatusEnum;
 import com.demo.contentcenter.feignclient.UserCenterFeignClient;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class ShareService {
@@ -33,6 +40,9 @@ public class ShareService {
 
     @Resource
     private RocketMQTemplate rocketMQTemplate;
+
+    @Resource
+    private RocketmqTransactionLogMapper rocketmqTransactionLogMapper;
 
     /**
      * ribbon+restTemplate实现远程调用
@@ -88,22 +98,64 @@ public class ShareService {
         if (share == null) {
             throw new IllegalArgumentException("该分享不存在！");
         }
-        //2.审核，修改状态
+        //2. 如果不是未审核，直接抛异常
         if (!Objects.equals("NOT_YET", share.getAuditStatus())) {
             throw new IllegalArgumentException("该分享已经审核，或者审核不通过！");
         }
-        share.setAuditStatus(shareAuditDto.getAuditStatusEnum().toString());
-        share.setReason(shareAuditDto.getReason());
-        this.shareMapper.updateByPrimaryKeySelective(share);
         //3.如果PASS，为发布人增加积分,积分服务并不太重要，异步执行，改善用户体验
         // 当前有4种方式实现异步 1.AsyncRestTemplate 2.@Async注解 3.WebClient spring5.0引入， 4.MQ
-        // 当前将消息发送到mq，user-center去消费，并为发布人增加积分
-        this.rocketMQTemplate.convertAndSend("add-bonus",
-                UserAddBonusMsgDto.
-                        builder()
-                        .userId(share.getUserId())
-                        .bonus(50)
-                        .build());
+        if (AuditStatusEnum.PASS.equals(shareAuditDto.getAuditStatusEnum())) {
+            //发送rocketmq事务消息
+            String transactionId = UUID.randomUUID().toString();
+            rocketMQTemplate.sendMessageInTransaction(
+                    "add-bonus-group", // 生产组
+                    "add-bonus",       // 主题
+                    MessageBuilder
+                            .withPayload(  // 消息内容
+                                    UserAddBonusMsgDto
+                                            .builder()
+                                            .userId(share.getUserId())
+                                            .bonus(50)
+                                            .build())
+                            .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
+                            .setHeader("share_id", id)
+                            .build(),
+                    shareAuditDto //参数args
+            );
+        } else {
+            //不通过，只更新数据库状态，不发送mq消息，增加用户积分
+            this.auditByIdInDB(id, shareAuditDto);
+        }
+
+        // 发送mq之后的代码，若之后的代码发生异常，会导致事务回滚，但是mq消息已经发出，
+        // 造成数据不一致，所以mq需要事务消息，监听本地事务状态
+        // 。。。
         return share;
     }
+
+    public void auditByIdInDB(Integer id, ShareAuditDto shareAuditDto) {
+        Share share = Share
+                .builder()
+                .id(id)
+                .auditStatus(shareAuditDto.getAuditStatusEnum().toString())
+                .reason(shareAuditDto.getReason())
+                .build();
+        this.shareMapper.updateByPrimaryKeySelective(share);
+    }
+
+    /**
+     * 审核表本地事务更新后，记录一条rocketmq日志到数据库
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void auditByIdWithRocketMqLog(Integer id, ShareAuditDto shareAuditDto, String transactionId) {
+        this.auditByIdInDB(id, shareAuditDto);
+        this.rocketmqTransactionLogMapper.insertSelective(
+                RocketmqTransactionLog
+                        .builder()
+                        .transactionId(transactionId)
+                        .log("审核分享。。。")
+                        .build()
+        );
+    }
+
 }

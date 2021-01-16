@@ -13,6 +13,15 @@ spring:
       discovery:
         server-addr: localhost:8848
         cluster-name: beijing
+    stream:
+      rocketmq:
+        binder:
+          name-server: 127.0.0.1:9876
+      bindings:
+        input:
+         destination: stream-add-bonus-topic
+         group: binder-group
+
 server:
   port: 8081
 
@@ -22,6 +31,3 @@ rocketmq:
   producer:
     # 必须指定group
     group: test-grop
----
-
----

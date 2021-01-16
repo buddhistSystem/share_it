@@ -1,5 +1,6 @@
 package com.demo.contentcenter.service.share;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.contentcenter.dao.RocketmqTransactionLogMapper;
 import com.demo.contentcenter.dao.share.ShareMapper;
 import com.demo.contentcenter.domain.dto.content.ShareAuditDto;
@@ -14,6 +15,7 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,9 @@ public class ShareService {
 
     @Resource
     private RocketmqTransactionLogMapper rocketmqTransactionLogMapper;
+
+    @Resource
+    private Source source;
 
     /**
      * ribbon+restTemplate实现远程调用
@@ -107,21 +112,9 @@ public class ShareService {
         if (AuditStatusEnum.PASS.equals(shareAuditDto.getAuditStatusEnum())) {
             //发送rocketmq事务消息
             String transactionId = UUID.randomUUID().toString();
-            rocketMQTemplate.sendMessageInTransaction(
-                    "add-bonus-group", // 生产组
-                    "add-bonus",       // 主题
-                    MessageBuilder
-                            .withPayload(  // 消息内容
-                                    UserAddBonusMsgDto
-                                            .builder()
-                                            .userId(share.getUserId())
-                                            .bonus(50)
-                                            .build())
-                            .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
-                            .setHeader("share_id", id)
-                            .build(),
-                    shareAuditDto //参数args
-            );
+            this.sendRocketMqMessage(share, transactionId, id, shareAuditDto);
+            //todo 使用stream编程模型导致producer重复注册问题为解决
+            //this.sendStreamRocketMqMessage(share, transactionId, id, shareAuditDto);
         } else {
             //不通过，只更新数据库状态，不发送mq消息，增加用户积分
             this.auditByIdInDB(id, shareAuditDto);
@@ -131,6 +124,42 @@ public class ShareService {
         // 造成数据不一致，所以mq需要事务消息，监听本地事务状态
         // 。。。
         return share;
+    }
+
+    //通过stream编程模型发送rocketmq消息
+    private void sendStreamRocketMqMessage(Share share, String transactionId, Integer id, ShareAuditDto shareAuditDto) {
+        //使用stream编程模型，开启事务消息，以及生产组和topic都在配置文件中指定
+        this.source.output().send(MessageBuilder
+                .withPayload(
+                        UserAddBonusMsgDto
+                                .builder()
+                                .userId(share.getUserId())
+                                .bonus(50)
+                                .build())
+                .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
+                .setHeader("share_id", id)
+                .setHeader("dto", JSON.toJSONString(shareAuditDto))
+                .build());
+    }
+
+
+    //通过spring编程模型发送rocketmq消息
+    private void sendRocketMqMessage(Share share, String transactionId, Integer id, ShareAuditDto shareAuditDto) {
+        rocketMQTemplate.sendMessageInTransaction(
+                "add-bonus-group", // 生产组
+                "add-bonus",       // 主题
+                MessageBuilder
+                        .withPayload(  // 消息内容
+                                UserAddBonusMsgDto
+                                        .builder()
+                                        .userId(share.getUserId())
+                                        .bonus(50)
+                                        .build())
+                        .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
+                        .setHeader("share_id", id)
+                        .build(),
+                shareAuditDto //参数args
+        );
     }
 
     public void auditByIdInDB(Integer id, ShareAuditDto shareAuditDto) {

@@ -23,6 +23,21 @@ spring:
         #port: 8719
         # 发送sentinel控制台心跳周期，默认10s
         #heartbeat-interval-ms: 10000
+    # 配置spring-cloud-stream
+    stream:
+      rocketmq:
+        binder:
+          name-server: 127.0.0.1:9876
+        bindings:
+          output:
+            producer:
+              transactionl: true
+              # 使用 stream编程模型有问题为解决
+              #group: stream-add-bonus-group
+      bindings:
+        output:
+          # 指定topic
+          destination: stream-add-bonus
   profiles:
     active: dev
   application:
@@ -67,7 +82,7 @@ rocketmq:
   name-server: 127.0.0.1:9876
   producer:
     # 必须指定group
-    group: test-grop
+    group: rocketmq-group
 
 #ahas配置
 #指定您要接入的特定的AHAS环境。
@@ -96,7 +111,3 @@ rocketmq:
 #    ConnectTimeout: 3000
 #    # Read timeout used by Apache HttpClient
 #    ReadTimeout: 3000
-
----
-
----

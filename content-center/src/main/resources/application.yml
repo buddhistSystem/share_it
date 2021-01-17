@@ -84,6 +84,12 @@ rocketmq:
     # 必须指定group
     group: rocketmq-group
 
+# jwt配置
+jwt:
+  secret: aabbccddee
+  # 有效期，单位秒，默认2周
+  expire-time-in-second: 1209600
+
 #ahas配置
 #指定您要接入的特定的AHAS环境。
 #ahas:

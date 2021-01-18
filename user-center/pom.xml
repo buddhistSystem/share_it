@@ -21,6 +21,8 @@
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
         <rocketmq-version>2.0.3</rocketmq-version>
+        <jjwt-version>0.9.0</jjwt-version>
+        <wx-java-version>3.5.0</wx-java-version>
     </properties>
 
     <dependencies>
@@ -60,7 +62,12 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.0</version>
+            <version>${jjwt-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>${wx-java-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

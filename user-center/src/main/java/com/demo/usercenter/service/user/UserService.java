@@ -3,6 +3,7 @@ package com.demo.usercenter.service.user;
 import com.demo.usercenter.dao.BonusEventLogMapper;
 import com.demo.usercenter.dao.user.UserMapper;
 import com.demo.usercenter.domain.dto.messaging.UserAddBonusMsgDto;
+import com.demo.usercenter.domain.dto.user.UserLoginDto;
 import com.demo.usercenter.domain.entity.BonusEventLog;
 import com.demo.usercenter.domain.entity.User;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,30 @@ public class UserService {
                 .createTime(new Date())
                 .description("投稿加积分")
                 .build());
+    }
+
+    public User login(UserLoginDto userLoginDto, String openid) {
+        // 通过用户的微信id查询用户是否注册
+        User user = this.userMapper.selectOne(User.
+                builder().
+                wxId(openid)
+                .build()
+        );
+        // 用户不存在，注册到user表中
+        if (user == null) {
+            User userToSave = User.builder()
+                    .wxId(openid)
+                    .wxNickname(userLoginDto.getWxNickName())
+                    .roles("user")//普通用户
+                    .avatarUrl(userLoginDto.getAvatarUrl())
+                    .bonus(0)
+                    .createTime(new Date())
+                    .updateTime(new Date())
+                    .build();
+            this.userMapper.insertSelective(userToSave);
+            return userToSave;
+        }
+        //用户存在，直接返回该用户
+        return user;
     }
 }

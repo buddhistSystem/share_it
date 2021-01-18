@@ -51,6 +51,9 @@ feign:
     config:
       default:
         loggerLevel: full
+        # 配置feign拦截器
+        requestInterceptors:
+          - com.demo.contentcenter.feignclient.interceptor.TokenRelayRequestInterceptor
   #配置feign使用httpclient进行请求，而不是UrlConnection，urlConnection不能使用连接池，使用httpclient性能提升15%左右
   httpclient:
     enabled: true

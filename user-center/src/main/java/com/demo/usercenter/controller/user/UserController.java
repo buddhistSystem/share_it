@@ -2,6 +2,7 @@ package com.demo.usercenter.controller.user;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import com.demo.usercenter.auth.CheckLogin;
 import com.demo.usercenter.domain.dto.user.JwtTokenResponseDto;
 import com.demo.usercenter.domain.dto.user.LoginResponseDto;
 import com.demo.usercenter.domain.dto.user.UserLoginDto;
@@ -9,6 +10,7 @@ import com.demo.usercenter.domain.dto.user.UserResponseDto;
 import com.demo.usercenter.domain.entity.User;
 import com.demo.usercenter.service.user.UserService;
 import com.demo.usercenter.util.JwtOperator;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,7 @@ public class UserController {
     @Resource
     private JwtOperator jwtOperator;
 
-
+    @CheckLogin
     @RequestMapping("/{id}")
     public User findById(@PathVariable Integer id) {
         log.info("user-center findById 方法被调用！");
@@ -75,5 +77,17 @@ public class UserController {
                 .build();
         return loginResponseDto;
     }
+
+
+    @GetMapping("/gen-test-token")
+    public String genToken() {
+        Map<String, Object> jwtParam = new HashMap<>();
+        jwtParam.put("id", "1");
+        jwtParam.put("wxNickName", "");
+        jwtParam.put("role", "user");
+        String token = jwtOperator.generateToken(jwtParam);
+        return token;
+    }
+
 
 }

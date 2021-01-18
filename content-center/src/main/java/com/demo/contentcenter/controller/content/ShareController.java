@@ -1,5 +1,6 @@
 package com.demo.contentcenter.controller.content;
 
+import com.demo.contentcenter.auth.CheckLogin;
 import com.demo.contentcenter.domain.dto.content.ShareDto;
 import com.demo.contentcenter.service.share.ShareService;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ public class ShareController {
     private ShareService shareService;
 
     @RequestMapping("/{id}")
+    @CheckLogin
     public ShareDto findById(@PathVariable Integer id) {
         return shareService.feignFindById(id);
     }

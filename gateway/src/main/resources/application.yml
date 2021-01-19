@@ -11,8 +11,16 @@ spring:
     gateway:
       discovery:
         locator:
-          # gateway通过nacos发现其他服务
           enabled: true
+      routes:
+        - id: user_route
+          uri: lb://user-center
+          predicates:
+            - Path=/users/**
+        - id: content_route
+          uri: lb://content-center
+          predicates:
+            - Path=/shares/**,/admin/**
 management:
   endpoints:
     web:

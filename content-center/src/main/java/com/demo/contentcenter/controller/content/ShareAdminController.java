@@ -18,7 +18,6 @@ public class ShareAdminController {
     @PutMapping("audit/{id}")
     @CheckRole("admin")
     public Share auditById(@PathVariable Integer id, @RequestBody ShareAuditDto shareAuditDto){
-        // TODO 认证，授权
         return this.shareService.auditById(id,shareAuditDto);
     }
 }

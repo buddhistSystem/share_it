@@ -84,7 +84,7 @@ public class UserController {
         Map<String, Object> jwtParam = new HashMap<>();
         jwtParam.put("id", "1");
         jwtParam.put("wxNickName", "");
-        jwtParam.put("role", "user");
+        jwtParam.put("role", "admin");
         String token = jwtOperator.generateToken(jwtParam);
         return token;
     }

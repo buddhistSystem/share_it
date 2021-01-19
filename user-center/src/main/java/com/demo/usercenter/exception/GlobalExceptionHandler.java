@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         log.warn("发生SecurityException异常", e);
         ResponseEntity<ErrorBody> responseEntity = new ResponseEntity<>(
                 ErrorBody.builder()
-                        .body("token不合法！")
+                        .body(e.getMessage())
                         .status(HttpStatus.UNAUTHORIZED.value())
                         .build(),
                 HttpStatus.UNAUTHORIZED);

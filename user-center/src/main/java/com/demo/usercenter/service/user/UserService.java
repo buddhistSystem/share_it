@@ -30,7 +30,7 @@ public class UserService {
         //1.为用户增加积分
         Integer userId = userAddBonusMsgDto.getUserId();
         User user = this.userMapper.selectByPrimaryKey(userId);
-        Integer bonus = userAddBonusMsgDto.getBonus();
+        Integer bonus = userAddBonusMsgDto.getBonus()+ user.getBonus();
         user.setBonus(bonus);
         this.userMapper.updateByPrimaryKey(user);
         //2.记录日志到bonus_event_log表中

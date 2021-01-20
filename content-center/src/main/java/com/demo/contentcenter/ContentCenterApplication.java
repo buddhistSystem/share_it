@@ -1,5 +1,6 @@
 package com.demo.contentcenter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -25,4 +26,13 @@ public class ContentCenterApplication {
     public String ping() {
         return "pong";
     }
+
+    @Value("config")
+    private String config;
+
+    @GetMapping("config")
+    public String config() {
+        return config;
+    }
+
 }

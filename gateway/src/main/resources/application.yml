@@ -21,6 +21,11 @@ spring:
           uri: lb://content-center
           predicates:
             - Path=/shares/**,/admin/**
+  zipkin:
+    base-url: http://127.0.0.1:9411/
+  sleuth:
+    sampler:
+      probability: 1.0
 management:
   endpoints:
     web:

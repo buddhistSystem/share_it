@@ -21,6 +21,12 @@ spring:
         input:
          destination: stream-add-bonus-topic
          group: binder-group
+  zipkin:
+    base-url: http://127.0.0.1:9411/
+  sleuth:
+    sampler:
+      #抽样率，默认0.1
+      probability: 1.0
 
 server:
   port: 8081

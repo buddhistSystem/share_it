@@ -2,11 +2,14 @@ package com.demo.contentcenter.service.share;
 
 import com.alibaba.fastjson.JSON;
 import com.demo.contentcenter.dao.RocketmqTransactionLogMapper;
+import com.demo.contentcenter.dao.share.MidUserShareMapper;
 import com.demo.contentcenter.dao.share.ShareMapper;
 import com.demo.contentcenter.domain.dto.content.ShareAuditDto;
 import com.demo.contentcenter.domain.dto.content.ShareDto;
 import com.demo.contentcenter.domain.dto.messaging.UserAddBonusMsgDto;
+import com.demo.contentcenter.domain.dto.user.UserAddBonusDto;
 import com.demo.contentcenter.domain.dto.user.UserDto;
+import com.demo.contentcenter.domain.entity.MidUserShare;
 import com.demo.contentcenter.domain.entity.RocketmqTransactionLog;
 import com.demo.contentcenter.domain.entity.Share;
 import com.demo.contentcenter.domain.enums.AuditStatusEnum;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,6 +37,9 @@ public class ShareService {
 
     @Resource
     private ShareMapper shareMapper;
+
+    @Resource
+    private MidUserShareMapper midUserShareMapper;
 
     @Resource
     private DiscoveryClient discoveryClient;
@@ -196,5 +203,49 @@ public class ShareService {
         //List<Share> shares = this.shareMapper.listShare(Share.builder().title(title).build());
         PageInfo<Share> pageInfo = new PageInfo<>(shares);
         return pageInfo;
+    }
+
+    /**
+     * 积分兑换指定分享
+     */
+    public Share exchangeById(Integer id, HttpServletRequest httpServletRequest) {
+        Integer userId = Integer.valueOf((String) httpServletRequest.getAttribute("id"));
+        //根据id查询share是否存在
+        Share share = this.shareMapper.selectOne(
+                Share.builder()
+                        .id(id)
+                        .auditStatus("PASS")
+                        .build()
+        );
+        if (share == null) {
+            throw new IllegalArgumentException("该分享不存在！或者还未审核通过！");
+        }
+        //查询mid_user_share表查询该用户是否已经兑换过该分享内容
+        MidUserShare midUserShare = this.midUserShareMapper.selectOne(
+                MidUserShare.builder()
+                        .userId(userId)
+                        .shareId(id)
+                        .build()
+        );
+        if (midUserShare != null) {
+            return share;
+        }
+        //根据当前登录人id，查询该用户积分是否足够
+        UserDto userDto = this.userCenterFeignClient.findById(userId);
+        if (share.getPrice() > userDto.getBonus()) {
+            throw new IllegalArgumentException("积分不够！");
+        }
+        this.userCenterFeignClient.addBonus(UserAddBonusDto.builder()
+                .userId(userId)
+                .bonus(0 - share.getPrice())
+                .build()
+        );
+        this.midUserShareMapper.insertSelective(
+                MidUserShare.builder()
+                        .userId(userId)
+                        .shareId(id)
+                        .build()
+        );
+        return share;
     }
 }

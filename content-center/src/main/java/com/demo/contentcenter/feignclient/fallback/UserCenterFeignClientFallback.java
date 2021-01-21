@@ -1,5 +1,6 @@
 package com.demo.contentcenter.feignclient.fallback;
 
+import com.demo.contentcenter.domain.dto.user.UserAddBonusDto;
 import com.demo.contentcenter.domain.dto.user.UserDto;
 import com.demo.contentcenter.feignclient.UserCenterFeignClient;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,13 @@ public class UserCenterFeignClientFallback implements UserCenterFeignClient {
     public UserDto findById(Integer id) {
         UserDto userDto = new UserDto();
         userDto.setWxNickname("服务发生错误，这是默认返回值");
+        return userDto;
+    }
+
+    @Override
+    public UserDto addBonus(UserAddBonusDto userAddBonusDto) {
+        UserDto userDto = new UserDto();
+        userDto.setWxNickname("添加积分熔断，或限流！");
         return userDto;
     }
 }

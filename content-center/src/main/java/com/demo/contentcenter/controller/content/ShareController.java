@@ -5,12 +5,10 @@ import com.demo.contentcenter.domain.dto.content.ShareDto;
 import com.demo.contentcenter.domain.entity.Share;
 import com.demo.contentcenter.service.share.ShareService;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/shares")
@@ -18,6 +16,9 @@ public class ShareController {
 
     @Resource
     private ShareService shareService;
+
+    @Resource
+    private HttpServletRequest httpServletRequest;
 
     @RequestMapping("/{id}")
     @CheckLogin
@@ -35,6 +36,12 @@ public class ShareController {
             pageSize = 100;
         }
         return shareService.q(title, pageNo, pageSize);
+    }
+
+    @PutMapping("/exchange/{id}")
+    @CheckLogin
+    public Share exchange(@PathVariable Integer id) {
+        return shareService.exchangeById(id, httpServletRequest);
     }
 
 }

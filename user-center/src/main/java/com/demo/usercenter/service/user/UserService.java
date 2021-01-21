@@ -3,6 +3,7 @@ package com.demo.usercenter.service.user;
 import com.demo.usercenter.dao.BonusEventLogMapper;
 import com.demo.usercenter.dao.user.UserMapper;
 import com.demo.usercenter.domain.dto.messaging.UserAddBonusMsgDto;
+import com.demo.usercenter.domain.dto.user.UserAddBonusDto;
 import com.demo.usercenter.domain.dto.user.UserLoginDto;
 import com.demo.usercenter.domain.entity.BonusEventLog;
 import com.demo.usercenter.domain.entity.User;
@@ -30,7 +31,7 @@ public class UserService {
         //1.为用户增加积分
         Integer userId = userAddBonusMsgDto.getUserId();
         User user = this.userMapper.selectByPrimaryKey(userId);
-        Integer bonus = userAddBonusMsgDto.getBonus()+ user.getBonus();
+        Integer bonus = userAddBonusMsgDto.getBonus() + user.getBonus();
         user.setBonus(bonus);
         this.userMapper.updateByPrimaryKey(user);
         //2.记录日志到bonus_event_log表中
@@ -65,6 +66,21 @@ public class UserService {
             return userToSave;
         }
         //用户存在，直接返回该用户
+        return user;
+    }
+
+    /**
+     * 增加用户积分
+     */
+    public User addBonus(UserAddBonusDto userAddBonusDto) {
+        Integer userId = userAddBonusDto.getUserId();
+        Integer bonus = userAddBonusDto.getBonus();
+        User user = this.userMapper.selectByPrimaryKey(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+        user.setBonus(user.getBonus() + bonus);
+        this.userMapper.updateByPrimaryKey(user);
         return user;
     }
 }

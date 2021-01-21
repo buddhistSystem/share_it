@@ -54,6 +54,7 @@ logging:
     com.demo.contentcenter.feignclient.UserCenterFeignClient: debug
     # sleuth打印debug日志
     org.springframework.cloud.sleuth: debug
+    com.demo.contentcenter.dao: debug
 feign:
   client:
     config:
@@ -100,6 +101,11 @@ jwt:
   secret: aabbccddee
   # 有效期，单位秒，默认2周
   expire-time-in-second: 1209600
+
+#mybatis配置
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+
 
 #ahas配置
 #指定您要接入的特定的AHAS环境。

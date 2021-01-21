@@ -11,6 +11,8 @@ import com.demo.contentcenter.domain.entity.RocketmqTransactionLog;
 import com.demo.contentcenter.domain.entity.Share;
 import com.demo.contentcenter.domain.enums.AuditStatusEnum;
 import com.demo.contentcenter.feignclient.UserCenterFeignClient;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -187,4 +190,11 @@ public class ShareService {
         );
     }
 
+    public PageInfo<Share> q(String title, Integer pageNo, Integer pageSize) {
+        PageHelper.startPage(pageNo, pageSize);
+        List<Share> shares = this.shareMapper.selectByParam(title);
+        //List<Share> shares = this.shareMapper.listShare(Share.builder().title(title).build());
+        PageInfo<Share> pageInfo = new PageInfo<>(shares);
+        return pageInfo;
+    }
 }

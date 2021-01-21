@@ -26,6 +26,7 @@ public class ShareController {
     }
 
     @RequestMapping("/q")
+    @CheckLogin
     public PageInfo<Share> q(@RequestParam(required = false) String title,
                              @RequestParam(required = false, defaultValue = "1") Integer pageNo,
                              @RequestParam(required = false, defaultValue = "10") Integer pageSize) {

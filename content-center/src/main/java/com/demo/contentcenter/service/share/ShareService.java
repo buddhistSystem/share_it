@@ -28,9 +28,12 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ShareService {
@@ -197,11 +200,34 @@ public class ShareService {
         );
     }
 
-    public PageInfo<Share> q(String title, Integer pageNo, Integer pageSize) {
+    public PageInfo<Share> q(String title, Integer pageNo, Integer pageSize, Integer userId) {
         PageHelper.startPage(pageNo, pageSize);
         List<Share> shares = this.shareMapper.selectByParam(title);
+        //处理过的shares，若用户未登录为游客，则分享列表不反悔下载地址
+        List<Share> shareDealed = new ArrayList<>();
+        if (userId == null) {
+            shareDealed = shares.stream().peek(
+                    share -> {
+                        share.setDownloadUrl(null);
+                    }
+            ).collect(Collectors.toList());
+        } else {
+            shareDealed = shares.stream().peek(
+                    share -> {
+                        MidUserShare midUserShare = this.midUserShareMapper.selectOne(
+                                MidUserShare.builder()
+                                        .userId(userId)
+                                        .shareId(share.getId())
+                                        .build()
+                        );
+                        if (midUserShare == null) {
+                            share.setDownloadUrl(null);
+                        }
+                    }
+            ).collect(Collectors.toList());
+        }
         //List<Share> shares = this.shareMapper.listShare(Share.builder().title(title).build());
-        PageInfo<Share> pageInfo = new PageInfo<>(shares);
+        PageInfo<Share> pageInfo = new PageInfo<>(shareDealed);
         return pageInfo;
     }
 
@@ -209,7 +235,7 @@ public class ShareService {
      * 积分兑换指定分享
      */
     public Share exchangeById(Integer id, HttpServletRequest httpServletRequest) {
-        Integer userId = Integer.valueOf((String) httpServletRequest.getAttribute("id"));
+        Integer userId = (Integer) httpServletRequest.getAttribute("id");
         //根据id查询share是否存在
         Share share = this.shareMapper.selectOne(
                 Share.builder()

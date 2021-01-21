@@ -4,7 +4,10 @@ import com.demo.contentcenter.auth.CheckLogin;
 import com.demo.contentcenter.domain.dto.content.ShareDto;
 import com.demo.contentcenter.domain.entity.Share;
 import com.demo.contentcenter.service.share.ShareService;
+import com.demo.contentcenter.util.JwtOperator;
 import com.github.pagehelper.PageInfo;
+import io.jsonwebtoken.Claims;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -20,6 +23,9 @@ public class ShareController {
     @Resource
     private HttpServletRequest httpServletRequest;
 
+    @Resource
+    private JwtOperator jwtOperator;
+
     @RequestMapping("/{id}")
     @CheckLogin
     public ShareDto findById(@PathVariable Integer id) {
@@ -27,18 +33,23 @@ public class ShareController {
     }
 
     @RequestMapping("/q")
-    @CheckLogin
     public PageInfo<Share> q(@RequestParam(required = false) String title,
                              @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-                             @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+                             @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                             @RequestHeader(value = "X-Token", required = false) String token) {
         //注意控制pageSize，不能过大
         if (pageSize > 100) {
             pageSize = 100;
         }
-        return shareService.q(title, pageNo, pageSize);
+        Integer userId = null;
+        if (StringUtils.isNotBlank(token)) {
+            Claims claims = jwtOperator.getClaimsFromToken(token);
+            userId = (Integer) claims.get("id");
+        }
+        return shareService.q(title, pageNo, pageSize, userId);
     }
 
-    @PutMapping("/exchange/{id}")
+    @GetMapping("/exchange/{id}")
     @CheckLogin
     public Share exchange(@PathVariable Integer id) {
         return shareService.exchangeById(id, httpServletRequest);

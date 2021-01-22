@@ -47,3 +47,13 @@ jwt:
 #mybatis配置
 mybatis:
   mapperLocations: classpath:mapper/*.xml
+
+# 配置actuator暴露节点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
